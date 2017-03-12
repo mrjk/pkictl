@@ -68,8 +68,7 @@ init_ca_folders() {
 init_ca_db() {
     cp /dev/null "${caPath}/db/${caName}.db"
     cp /dev/null "${caPath}/db/${caName}.db.attr"
-    echo 01 > "${caPath}/db/${caName}.crt.srl"
-    echo 01 > "${caPath}/db/${caName}.crl.srl"
+    openssl rand -hex 16 > "${caPath}/db/${caName}.crl.srl"
 }
 
 init_import_folders() {
@@ -117,23 +116,27 @@ sign_root_ca_request() {
 
     if [[ "$PKICTL_CA_EXTENSIONS" == "" ]] && [[ "$PKICTL_CA_POLICY" == "" ]]; then
         $OPENSSL_BIN ca ${opensslOpt} -selfsign \
+            -create_serial \
             -config "$conf" \
             -in "${caPath}/${csrName}.csr" \
             -out "${caPath}/${outName}.crt"
     elif [[ "$PKICTL_CA_EXTENSIONS" != "" ]] && [[ "$PKICTL_CA_POLICY" == "" ]]; then
         $OPENSSL_BIN ca ${opensslOpt} -selfsign \
+            -create_serial \
             -config "$conf" \
             -in "${caPath}/${csrName}.csr" \
             -out "${caPath}/${outName}.crt" \
             -extensions "$PKICTL_CA_EXTENSIONS"
     elif [[ "$PKICTL_CA_EXTENSIONS" == "" ]] && [[ "$PKICTL_CA_POLICY" != "" ]]; then
         $OPENSSL_BIN ca ${opensslOpt} -selfsign \
+            -create_serial \
             -config "$conf" \
             -in "${caPath}/${csrName}.csr" \
             -out "${caPath}/${outName}.crt" \
             -policy "$PKICTL_CA_POLICY"
     else
         $OPENSSL_BIN ca ${opensslOpt} -selfsign \
+            -create_serial \
             -config "$conf" \
             -in "${caPath}/${csrName}.csr" \
             -out "${caPath}/${outName}.crt" \
@@ -161,23 +164,27 @@ sign_request() {
     fi
     if [[ "$PKICTL_CA_EXTENSIONS" == "" ]] && [[ "$PKICTL_CA_POLICY" == "" ]]; then
         $OPENSSL_BIN ca ${opensslOpt}\
+            -create_serial \
             -config "$conf" \
             -in "$inCsr" \
             -out "$outCrt"
     elif [[ "$PKICTL_CA_EXTENSIONS" != "" ]] && [[ "$PKICTL_CA_POLICY" == "" ]]; then
         $OPENSSL_BIN ca ${opensslOpt}\
+            -create_serial \
             -config "$conf" \
             -in "$inCsr" \
             -out "$outCrt" \
             -extensions "$PKICTL_CA_EXTENSIONS"
     elif [[ "$PKICTL_CA_EXTENSIONS" == "" ]] && [[ "$PKICTL_CA_POLICY" != "" ]]; then
         $OPENSSL_BIN ca ${opensslOpt}\
+            -create_serial \
             -config "$conf" \
             -in "$inCsr" \
             -out "$outCrt" \
             -policy "$PKICTL_CA_POLICY"
     else
         $OPENSSL_BIN ca ${opensslOpt}\
+            -create_serial \
             -config "$conf" \
             -in "$inCsr" \
             -out "$outCrt" \
